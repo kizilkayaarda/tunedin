@@ -124,7 +124,7 @@
             if ($_SESSION['userType'] === "Artist") {
                 header("location: ../artist_homepage.php");
             } else {
-                header("location: ../regular_homepage.php");
+                header("location: ../regular_feed.php");
             }
             //header("location: ../index.php?error=none");
             exit();

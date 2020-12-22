@@ -1,5 +1,5 @@
 <?php
-    include_once "hf/artist_header.php";
+    include_once "hf/regular_header.php";
 ?>
     
     <!-- everything goes between includes -->
@@ -10,5 +10,5 @@
     ?>
 
 <?php
-    include_once "hf/artist_footer.php";
+    include_once "hf/regular_footer.php";
 ?>
