@@ -130,4 +130,98 @@
             exit();
         }
     }
+
+    // utility functions for uploading a song
+    function uploadSong($conn, $name, $price, $length, $genre, $score, $releaseDate, $coverImage, $artistUsername) {
+        $sql = "INSERT INTO `musicobject`(`name`, `price`, `length`, `score`, 
+                `release_date`, `cover_img`, `artist_username`) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_stmt_init($conn);
+        if (!mysqli_stmt_prepare($stmt, $sql)) {
+            header('Location: ../artist_upload_song.php?error=stmtfailed');
+            exit();
+        } 
+        mysqli_stmt_bind_param($stmt, "sssssss", $name, $price, $length, $score, $releaseDate, $coverImage, $artistUsername);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+
+        $newSongID = mysqli_insert_id($conn);
+        $sql = "INSERT INTO `musicobjectgenre`(`music_object_id`, `genre_name`) VALUES (?, ?)";
+        $stmt = mysqli_stmt_init($conn);
+        if (!mysqli_stmt_prepare($stmt, $sql)) {
+            header('Location: ../artist_upload_song.php?error=stmtfailed');
+            exit();
+        } 
+        mysqli_stmt_bind_param($stmt, "is", $newSongID, $genre);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        return $newSongID;
+    }
+
+    function uploadAlbum($conn, $albumName, $albumCoverImg, $artistUsername) {
+        $sql = "INSERT INTO `musicobject`(`name`, `cover_img`, `artist_username`) 
+                VALUES (?, ?, ?)";
+
+        $stmt = mysqli_stmt_init($conn);
+        if (!mysqli_stmt_prepare($stmt, $sql)) {
+            header('Location: ../artist_upload_album.php?error=stmtfailed');
+            exit();
+        } 
+        mysqli_stmt_bind_param($stmt, "sss", $albumName, $albumCoverImg, $artistUsername);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+    
+        $newAlbumID = mysqli_insert_id($conn);
+        $sql = "INSERT INTO `album`(`album_id`) VALUES (?)";
+
+        $stmt = mysqli_stmt_init($conn);
+        if (!mysqli_stmt_prepare($stmt, $sql)) {
+            header('Location: ../artist_upload_album.php?error=stmtfailed');
+            exit();
+        } 
+        mysqli_stmt_bind_param($stmt, "i", $newAlbumID);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        return $newAlbumID;
+    }
+
+
+    // utility functions for uploading a song
+    function uploadSongToAlbum($conn, $albumID, $order, $name, $price, $length, $genre, $score, $releaseDate, $coverImage, $artistUsername) {
+        $sql = "INSERT INTO `musicobject`(`name`, `price`, `length`, `score`, 
+                `release_date`, `cover_img`, `artist_username`) 
+                VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $stmt = mysqli_stmt_init($conn);
+        if (!mysqli_stmt_prepare($stmt, $sql)) {
+            header('Location: ../artist_upload_album.php?error=stmtfailed');
+            exit();
+        } 
+        mysqli_stmt_bind_param($stmt, "sssssss", $name, $price, $length, $score, $releaseDate, $coverImage, $artistUsername);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+
+        $newSongID = mysqli_insert_id($conn);
+        $sql = "INSERT INTO `musicobjectgenre`(`music_object_id`, `genre_name`) VALUES (?, ?)";
+        $stmt = mysqli_stmt_init($conn);
+        if (!mysqli_stmt_prepare($stmt, $sql)) {
+            header('Location: ../artist_upload_album.php?error=stmtfailed');
+            exit();
+        } 
+        mysqli_stmt_bind_param($stmt, "is", $newSongID, $genre);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+
+        $sql = "INSERT INTO `song`(`song_id`, `album_id`, `number`) 
+                VALUES (?, ?, ?)";
+        $stmt = mysqli_stmt_init($conn);
+        if (!mysqli_stmt_prepare($stmt, $sql)) {
+            header('Location: ../artist_upload_album.php?error=stmtfailed');
+            exit();
+        } 
+        mysqli_stmt_bind_param($stmt, "iii", $newSongID, $albumID, $order);
+        mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+
+        return $newSongID;
+    }
 ?>
