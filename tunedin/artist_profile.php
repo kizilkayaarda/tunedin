@@ -1,12 +1,14 @@
 <?php
     include_once "hf/artist_header.php";
+    if (!isset($_SESSION["username"])) {
+        header("location: index.php?error=unauthorized");
+        exit();
+    }
+    if (!isset($_SESSION["userType"]) || ($_SESSION["userType"] != "Artist")){
+        header("location: index.php?error=unauthorized");
+        exit();
+    }
 ?>
-    <!-- everything goes between includes -->
-    <!-- Test if the session works -->
-    <?php
-        echo $_SESSION['username'];
-        echo $_SESSION['userType'];
-    ?>
 <?php
     include_once "hf/artist_footer.php";
 ?>
