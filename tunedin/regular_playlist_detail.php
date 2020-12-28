@@ -9,17 +9,56 @@
 	$username = $_SESSION['username'];
 	//$no_playlist = false;
 
+	$songs = null;
+	$other_songs = null;
+
+	if (isset($_POST['remove'])) {
+		
+		$playlist_id = intval($_POST['playlist-id']);
+		$song_id = intval($_POST['song-id']);
+
+		
+		$sql = "DELETE FROM playlistsong WHERE song_id='$song_id' and playlist_id='$playlist_id'";
+		$result = mysqli_query($conn, $sql);
+
+		if (!$result) {
+			echo '<script type="text/javascript">alert("Could not remove the song from the playlist!");</script>';
+			echo "Error while processing the query" . mysqli_connect_error();
+			
+		}
+		$_GET['playlist_id'] = $playlist_id;
+	}
+
+	if (isset($_POST['add'])) {
+		
+		$playlist_id = intval($_POST['playlist-id']);
+		$song_id = intval($_POST['song-id']);
+
+		//echo "playlist id before insert: " . $playlist_id . " song id: " . $song_id . "....";
+		$sql = "INSERT INTO playlistsong VALUES ('$playlist_id', '$song_id', curdate())";
+		$result = mysqli_query($conn, $sql);
+
+		if (!$result) {
+			echo '<script type="text/javascript">alert("Could not add the song to the playlist!");</script>';
+			echo "Error while processing the query" . mysqli_error($conn);
+			echo "SONG COULD NOT ADDED TO THE PLAYLIST!";
+			
+		}	
+		$_GET['playlist_id'] = $playlist_id;
+	}
+
 	if (isset($_GET['playlist_id'])) {
 
-		$playlist_id = $_GET['playlist_id'];
+		$playlist_id = intval($_GET['playlist_id']);
+		//echo "PLAYLIST ID IS: " . $playlist_id . " BEFORE THE QUERY\n";
 		//echo "PLAYLIST ID" . $playlist_id;
-		$sql = "SELECT song.song_id as song_id, playlist.name as playlist_name, musicobject.name as song_name, musicobject.length, musicobject.release_date, musicobject.artist_username FROM playlistsong, Song, musicobject, playlist WHERE playlistsong.playlist_id=$playlist_id and playlistsong.song_id=song.song_id and musicobject.music_object_id=song.song_id and playlist.playlist_id=playlistsong.playlist_id;";
+		$sql = "SELECT song.song_id as song_id, playlist.name as playlist_name, musicobject.name as song_name, musicobject.length, musicobject.release_date, musicobject.artist_username FROM playlistsong, Song, musicobject, playlist WHERE playlistsong.playlist_id='$playlist_id' and playlistsong.song_id=song.song_id and musicobject.music_object_id=song.song_id and playlist.playlist_id=playlistsong.playlist_id;";
 
 		$result = mysqli_query($conn, $sql);
 
 		if (!$result) {
-			echo '<script type="text/javascript">alert("Error while processing the query!");</script>';
-			echo "Error while processing the query" . mysqli_connect_error();
+			echo '<script type="text/javascript">alert("Could not load the songs in the playlist!");</script>';
+			echo "Error while processing the query" . mysqli_error($conn);
 		}
 		else {
 			$songs = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -31,8 +70,8 @@
 		$result = mysqli_query($conn, $sql);
 
 		if (!$result) {
-			echo '<script type="text/javascript">alert("Error while processing the query!");</script>';
-			echo "Error while processing the query" . mysqli_connect_error();
+			echo '<script type="text/javascript">alert("Could not load the songs you bought!");</script>';
+			echo "Error while processing the query" . mysqli_error($conn);
 		}
 		else {
 			$other_songs = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -75,7 +114,7 @@
 			<td><?php echo htmlspecialchars($song['length']); ?> seconds</td>
 			<td><?php echo htmlspecialchars($song['release_date']); ?></td>
 			<td>
-				<form method="POST" action="remove_song_from_playlist.php">
+				<form method="POST" action="regular_playlist_detail.php">
 					<input type="hidden" name="playlist-id" value="<?php echo htmlspecialchars($_GET['playlist_id']); ?>">
 					<input type="hidden" name="song-id" value="<?php echo htmlspecialchars($song['song_id']); ?>">
 					<input type="submit" name="remove" class="btn btn-danger" value="REMOVE">
@@ -107,7 +146,7 @@
 				<td><?php echo htmlspecialchars($song['length']); ?> seconds</td>
 				<td><?php echo htmlspecialchars($song['release_date']); ?></td>
 				<td>
-				<form method="POST" action="add_song_to_playlist.php">
+				<form method="POST" action="regular_playlist_detail.php">
 					<input type="hidden" name="playlist-id" value="<?php echo htmlspecialchars($_GET['playlist_id']); ?>">
 					<input type="hidden" name="song-id" value="<?php echo htmlspecialchars($song['song_id']); ?>">
 					<input type="submit" name="add" class="btn btn-primary" value="ADD">
