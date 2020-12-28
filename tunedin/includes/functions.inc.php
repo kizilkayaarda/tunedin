@@ -100,6 +100,50 @@
         exit();
     }
 
+    function isFriend($conn, $curUsername, $otherUsername) {
+        $sql = "SELECT * FROM Friend WHERE (requesting_username=? AND requested_username=?) OR (requesting_username=? AND requested_username=?);";
+        $stmt = mysqli_stmt_init($conn);
+
+        if (!mysqli_stmt_prepare($stmt, $sql)) {
+            header('Location: ../regular_search.php?error=stmtfailed');
+            exit();
+        } 
+
+        mysqli_stmt_bind_param($stmt, "ssss", $curUsername, $otherUsername, $otherUsername, $curUsername);
+        mysqli_stmt_execute($stmt);
+
+        $resultData = mysqli_stmt_get_result($stmt);
+        $numRows = mysqli_num_rows($resultData);
+        mysqli_stmt_close($stmt);
+
+        if ($numRows === 0) {
+            return -1;
+        } else {
+            $row = mysqli_fetch_assoc($resultData);
+            return $row;
+        }
+    }
+
+    function getProfileButton($conn, $curUsername, $userUsername) {
+
+        $result = isFriend($conn, $curUsername, $userUsername);
+        
+        if ($result === -1) {
+            return "<a href='includes/friendship.inc.php?src=$curUsername&dst=$userUsername&action=send' class='btn btn-primary'>Add Friend</a>";
+        }
+        $status = $result['is_accepted'];
+        $src = $result['requesting_username'];
+
+        if ($status === 0) {
+            if ($src === $curUsername) {
+                return "<a href='includes/friendship.inc.php?src=$curUsername&dst=$userUsername&action=cancel' class='btn btn-warning'>Cancel Request</a>";
+            }
+            return "<a href='includes/friendship.inc.php?src=$userUsername&dst=$curUsername&action=accept' class='btn btn-success'>Accept Request</a>
+                    <a href='includes/friendship.inc.php?src=$userUsername&dst=$curUsername&action=reject' class='btn btn-danger'>Reject Request</a>";
+        }
+        return "<a href='includes/friendship.inc.php?src=$userUsername&dst=$curUsername&action=delete' class='btn btn-danger'>Delete Friend</a>";
+    } 
+
     // login the user
     function loginUser($conn, $username, $pwd) {
         $usernameExists = usernameExists($conn, $username, $username);

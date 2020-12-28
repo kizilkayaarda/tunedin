@@ -39,9 +39,11 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="libraryDropdown">
                         <a class="dropdown-item" href="regular_recently_added.php">Recently Added</a>
+                        <!--
                         <a class="dropdown-item" href="regular_artists.php">Artists</a>
                         <a class="dropdown-item" href="regular_albums.php">Albums</a>
                         <a class="dropdown-item" href="regular_songs.php">Songs</a>
+                        -->
                     </div>
                 </li>
 
@@ -72,8 +74,8 @@
             </ul>
 
             <form class="form-inline my-2 my-lg-0" action="regular_search.php" method="post">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
+                <input class="form-control mr-sm-2" type="search" name="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-light my-2 my-sm-0" name="submit" type="submit">Search</button>
             </form>
         </div>
     </nav>
