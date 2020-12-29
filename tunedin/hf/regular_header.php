@@ -42,8 +42,9 @@
                         <!--
                         <a class="dropdown-item" href="regular_artists.php">Artists</a>
                         <a class="dropdown-item" href="regular_albums.php">Albums</a>
-                        <a class="dropdown-item" href="regular_songs.php">Songs</a>
                         -->
+                        <a class="dropdown-item" href="regular_songs.php">Songs</a>
+                        
                     </div>
                 </li>
 
